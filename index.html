@@ -3,7 +3,44 @@
 <meta name="description" content="Section 144: a Pac-Man style street game set in New Delhi. Pick protester or police, grow your crowd, outlast the city.">
 <meta property="og:title" content="Section 144"><meta property="og:description" content="Four or more is a crowd. How long can you hold the streets?">
 <meta name="theme-color" content="#F1DCC0">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}</style>
+<meta property="og:type" content="website"><meta property="og:url" content="https://subhavnarain.github.io/section-144/">
+<meta property="og:image" content="https://subhavnarain.github.io/section-144/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://subhavnarain.github.io/section-144/og.png">
+<link rel="icon" href="icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}
+.challenge{margin:0;background:var(--yolk);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:10px 14px;font-weight:800;font-size:15px;line-height:1.35}
+.share{display:flex;flex-direction:column;gap:8px;border-top:3px dashed var(--ink);padding-top:14px}
+.share .go{font-size:17px;padding:10px 16px}
+.go.share-btn{background:linear-gradient(135deg,#feda75,#fa7e1e 30%,#d62976 60%,#962fbf 85%,#4f5bd5);color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.3)}
+.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px;font-size:17px;line-height:1.4}
+.tvstatus{margin:0;font-weight:800;font-size:18px;background:var(--paper);border:3px solid var(--ink);padding:10px 14px}
+.tvside{align-items:center;text-align:center}
+.tvcode{font-family:var(--f-display);font-size:clamp(56px,8vw,96px);letter-spacing:.12em;line-height:1}
+.tvqr canvas{width:min(260px,60vw);height:auto;border:3px solid var(--ink);display:block}
+.tvside .lb{width:100%;text-align:left}
+body.tv .hcard .v{font-size:40px}body.tv .hcard{padding:8px 16px}body.tv #toast{font-size:20px}body.tv .lbl{font-size:14px}
+/* phone controller */
+#pad{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--paper);color:var(--ink);overflow:auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:calc(10px + env(safe-area-inset-top,0px)) calc(16px + env(safe-area-inset-bottom,0px))}
+.padhead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-bottom:10px;border-bottom:3px solid var(--ink)}
+.padlogo{font-family:var(--f-display);font-size:20px;text-shadow:2px 2px 0 var(--pink)}
+.padstatus{font-family:var(--f-mono);font-size:12px;font-weight:700;background:var(--yolk);border:2px solid var(--ink);padding:3px 8px}
+.padview{display:flex;flex-direction:column;gap:14px;padding-top:16px;flex:1;min-height:0}
+.padtitle{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0}
+.padbig{font-family:var(--f-display);font-weight:400;font-size:72px;margin:0;line-height:1}
+#pNick{font:600 16px var(--f-body);padding:11px 12px;border:3px solid var(--ink);background:#fff;color:var(--ink);user-select:text}
+#pStart{align-self:stretch;font-size:24px}
+.padhud{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.padhud>div{border:3px solid var(--ink);background:#fff;padding:6px 10px;display:flex;flex-direction:column;min-width:0}
+.padhud .k{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.padhud b{font-family:var(--f-display);font-weight:400;font-size:22px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.padzone{flex:1;min-height:320px;position:relative;border:3px solid var(--ink);background:repeating-linear-gradient(45deg,#fff,#fff 14px,#f1efe6 14px,#f1efe6 28px);touch-action:none;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;place-items:center;user-select:none}
+.pz{all:unset;width:84px;height:84px;display:grid;place-items:center;font-size:30px;background:var(--yolk);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);touch-action:none}
+.pz.on{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink);background:var(--pink)}
+.pz.up{grid-column:2;grid-row:1}.pz.left{grid-column:1;grid-row:2}.pz.right{grid-column:3;grid-row:2}.pz.down{grid-column:2;grid-row:3}
+.pzmid{grid-column:2;grid-row:2;font-family:var(--f-display);font-size:14px;text-align:center;color:var(--muted)}
+body.padmode{overflow:hidden}
+</style>
 </head><body>
 <title>Section 144</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -155,6 +192,7 @@ ol.lb .sec{font-family:var(--f-mono);font-weight:700;text-align:right;min-width:
   <section class="overlay" id="menu">
     <div class="sheet">
       <div class="poster">
+        <p class="challenge" id="challenge" hidden></p>
         <span class="kicker">New Delhi · tonight · four or more is a crowd</span>
         <h1>Section<br>144</h1>
         <p class="tag">The roads are your only way through. Buildings and police barricades box you in. Pick a side, work the streets, and <b>grow your group</b> by meeting your own. Hit a bigger group from the other side and you're done. It gets faster every second.</p>
@@ -165,6 +203,10 @@ ol.lb .sec{font-family:var(--f-mono);font-weight:700;text-align:right;min-width:
         <div class="row">
           <label class="fld"><span class="kicker">Name on the board</span><input id="nick" maxlength="16" placeholder="e.g. chai_runner" autocomplete="off" spellcheck="false"></label>
           <button class="go" id="startBtn">Hit the streets</button>
+        </div>
+        <div class="row">
+          <button class="go ghost" id="tvBtn">Play on TV, phone as controller</button>
+          <button class="go ghost" id="castBtn" hidden>Cast to Chromecast</button>
         </div>
         <p id="glErr" hidden>Your browser couldn't start 3D graphics, so the game can't run here. Try Chrome, Safari or Edge with hardware acceleration on.</p>
         <dl class="rules">
@@ -191,6 +233,31 @@ ol.lb .sec{font-family:var(--f-mono);font-weight:700;text-align:right;min-width:
     </div>
   </section>
 
+  <section class="overlay" id="tvLobby" hidden>
+    <div class="sheet">
+      <div class="poster">
+        <span class="kicker">TV mode · your phone is the controller</span>
+        <h1>Section<br>144</h1>
+        <ol class="steps">
+          <li>Scan the code with your phone camera.</li>
+          <li>Pick a side on your phone and tap <b>Start on TV</b>.</li>
+          <li>Swipe on your phone to steer your crowd on the big screen.</li>
+        </ol>
+        <p id="tvStatus" class="tvstatus">Connecting…</p>
+        <p class="lbnote">Getting this onto a TV: open this page in the TV's browser, cast this tab from Chrome (menu, then Cast), or AirPlay a Mac or iPad screen to your Apple TV.</p>
+        <div class="row"><button class="go ghost" id="tvKeys">Play here with the keyboard instead</button></div>
+      </div>
+      <aside class="board tvside" aria-label="Join code">
+        <span class="kicker">Room code</span>
+        <div id="tvCode" class="tvcode">····</div>
+        <div id="tvQr" class="tvqr"></div>
+        <span id="tvUrl" class="credit"></span>
+        <h2>Global board</h2>
+        <ol class="lb" id="lbTv"></ol>
+      </aside>
+    </div>
+  </section>
+
   <section class="overlay" id="over" hidden>
     <div class="sheet">
       <div class="poster">
@@ -203,6 +270,16 @@ ol.lb .sec{font-family:var(--f-mono);font-weight:700;text-align:right;min-width:
           <div class="stat"><div class="k">Board rank</div><div class="v" id="oRank">-</div></div>
         </div>
         <p id="saveMsg"></p>
+        <p class="challenge" id="oChallenge" hidden></p>
+        <div class="share">
+          <span class="kicker">Share on Instagram</span>
+          <div class="row">
+            <button class="go share-btn" id="shStory">Share to Story</button>
+            <button class="go ghost" id="shPost">Share as Post</button>
+            <button class="go ghost" id="shLink">Copy challenge link</button>
+          </div>
+          <p id="shareMsg" class="lbnote" aria-live="polite"></p>
+        </div>
         <div class="row">
           <button class="go" id="againBtn">Run it back</button>
           <button class="go ghost" id="switchBtn">Switch side</button>
@@ -224,11 +301,52 @@ ol.lb .sec{font-family:var(--f-mono);font-weight:700;text-align:right;min-width:
   </section>
 </div>
 
+
+<section id="pad" hidden>
+  <header class="padhead"><span class="padlogo">SECTION 144</span><span id="padStatus" class="padstatus">Connecting…</span></header>
+  <div id="padLobby" class="padview">
+    <span class="kicker">Controller · room <b id="padCode">----</b></span>
+    <h2 class="padtitle">Pick your side</h2>
+    <div class="sides" role="group" aria-label="Choose side">
+      <button class="side" id="pPro" data-side="pro" aria-pressed="true"><span class="nm">Protester</span><span class="ds">Grow the crowd.</span></button>
+      <button class="side" id="pPol" data-side="pol" aria-pressed="false"><span class="nm">Police</span><span class="ds">Break it up.</span></button>
+    </div>
+    <label class="fld"><span class="kicker">Name on the board</span><input id="pNick" maxlength="16" placeholder="e.g. chai_runner" autocomplete="off" spellcheck="false"></label>
+    <button class="go" id="pStart" disabled>Start on TV</button>
+    <p class="lbnote" id="padHelp">Keep this page open. Your phone steers, the TV shows the game.</p>
+  </div>
+  <div id="padPlay" class="padview" hidden>
+    <div class="padhud"><div><span class="k">Held out</span><b id="pTime">0.0s</b></div><div><span class="k">Crowd</span><b id="pSize">1</b></div><div><span class="k">Power</span><b id="pPow">-</b></div></div>
+    <div id="padZone" class="padzone" aria-label="Swipe area">
+      <button class="pz up" data-k="ArrowUp" aria-label="Up">▲</button>
+      <button class="pz left" data-k="ArrowLeft" aria-label="Left">◀</button>
+      <span class="pzmid">SWIPE<br>OR TAP</span>
+      <button class="pz right" data-k="ArrowRight" aria-label="Right">▶</button>
+      <button class="pz down" data-k="ArrowDown" aria-label="Down">▼</button>
+    </div>
+  </div>
+  <div id="padOver" class="padview" hidden>
+    <span class="kicker" id="pKick">Game over</span>
+    <h2 class="padbig" id="pOverTime">0.0s</h2>
+    <p class="lbnote" id="pOverStats"></p>
+    <span class="kicker">Share on Instagram</span>
+    <div class="row"><button class="go share-btn" id="pShStory">Share to Story</button><button class="go ghost" id="pShPost">Share as Post</button></div>
+    <div class="row"><button class="go ghost" id="pShLink">Copy challenge link</button></div>
+    <p class="lbnote" id="pShareMsg" aria-live="polite"></p>
+    <div class="row"><button class="go" id="pAgain">Play again</button><button class="go ghost" id="pBack">Switch side</button></div>
+  </div>
+</section>
+<script src="config.js"></script>
+<script src="vendor/supabase.js"></script>
+<script src="vendor/qrcode.js"></script>
+<script src="js/common.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 (()=>{
 const $=s=>document.querySelector(s);
+const QS=new URLSearchParams(location.search);const MODE=QS.has('pad')?'pad':(QS.has('tv')?'tv':'play');
+if(MODE==='pad')return;
 const THREE=window.THREE;
 const N=61, OFF=30, NODE=6;
 let seed=144; const srand=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
@@ -774,60 +892,171 @@ glc.addEventListener('contextmenu',e=>e.preventDefault());
 const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 
 // ---------- flow ----------
+const S=window.S144;
 const hb=$('#heatbar');for(let i=0;i<8;i++)hb.appendChild(document.createElement('i'));
 function setSide(s){side=s;$('#sPro').setAttribute('aria-pressed',s==='pro');$('#sPol').setAttribute('aria-pressed',s==='pol');try{localStorage.setItem('s144side',s)}catch(e){}}
 $('#sPro').onclick=()=>setSide('pro');$('#sPol').onclick=()=>setSide('pol');
 try{const s=localStorage.getItem('s144side');if(s==='pro'||s==='pol')setSide(s);const n=localStorage.getItem('s144nick');if(n)$('#nick').value=n}catch(e){}
-function nick(){const v=($('#nick').value||'').replace(/\s+/g,' ').trim().slice(0,16);return v||'Anon'}
-function start(){if(!renderer||!ready)return;try{localStorage.setItem('s144nick',$('#nick').value.trim().slice(0,16))}catch(e){}
-  newGame(false);camInit=false;state='play';$('#menu').hidden=true;$('#over').hidden=true;$('#hud').hidden=false;$('#dpad').classList.add('live');$('#hSizeK').textContent=TXT[side].sizeK;
-  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();toast(TXT[side].hello);if(isTouch){$('#swipeHint').hidden=false;clearTimeout(hintT);hintT=setTimeout(hideHint,4500)}}
+function nick(){return S.cleanName($('#nick').value)}
+// challenge links: ?beat=87.3&by=Name&s=pro
+const CH=(()=>{const b=parseFloat(QS.get('beat'));if(!(b>0&&b<3600))return null;return{secs:b,by:S.cleanName(QS.get('by')),side:QS.get('s')==='pol'?'pol':'pro',beaten:false}})();
+if(CH&&MODE!=='tv'){const el=$('#challenge');el.hidden=false;el.textContent=`${CH.by} held out ${CH.secs.toFixed(1)}s as ${CH.side==='pol'?'Police':'a Protester'}. Can you beat it?`;setSide(CH.side)}
+function start(){if(!renderer||!ready)return;S.ls.set('s144nick',$('#nick').value.trim().slice(0,16));
+  newGame(false);camInit=false;state='play';sharePrep=null;if(CH)CH.beaten=false;
+  $('#menu').hidden=true;$('#over').hidden=true;$('#tvLobby').hidden=true;$('#hud').hidden=false;$('#hSizeK').textContent=TXT[side].sizeK;
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();toast(TXT[side].hello);
+  if(isTouch&&MODE!=='tv'){$('#swipeHint').hidden=false;clearTimeout(hintT);hintT=setTimeout(hideHint,4500)}
+  if(tvRoom)tvRoom.send({t:'started',side})}
 $('#startBtn').onclick=start;$('#againBtn').onclick=start;
 $('#switchBtn').onclick=()=>{setSide(side==='pro'?'pol':'pro');start()};
-$('#menuBtn').onclick=()=>{state='menu';newGame(true);camInit=false;$('#over').hidden=true;$('#menu').hidden=false;$('#hud').hidden=true;$('#dpad').classList.remove('live');renderBoards()};
+function toMenu(){state='menu';newGame(true);camInit=false;$('#over').hidden=true;$('#hud').hidden=true;if(MODE==='tv')showLobby();else $('#menu').hidden=false;renderBoards()}
+$('#menuBtn').onclick=toMenu;
 function nearestLM(){const P=G.P;let b=LM[0],bd=1e9;for(const l of LM){const d=Math.hypot(l.x-px(P),l.y-pz(P));if(d<bd){bd=d;b=l}}return b}
+function captureShot(w){try{drawCrowds(performance.now()/1000);renderer.render(scene,camera);const h=Math.round(w*glc.height/glc.width),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(glc,0,0,w,h);return c}catch(e){return null}}
+let sharePrep=null,lastRec=null,lastShot=null;
+async function prep(){if(!lastRec)return;const r=Object.assign({},lastRec);try{sharePrep=await S.prepareShare(r,lastShot)}catch(e){console.error(e)}}
 function gameOver(){state='over';buzz([60,40,80]);hideHint();const secs=Math.round(G.t*10)/10;
-  $('#hud').hidden=true;$('#dpad').classList.remove('live');$('#toast').hidden=true;$('#pw').hidden=true;
+  lastShot=captureShot(1280);
+  $('#hud').hidden=true;$('#toast').hidden=true;$('#pw').hidden=true;
   $('#oKick').textContent=TXT[side].kick+' '+nearestLM().n;$('#oTitle').textContent=TXT[side].lose;
   $('#oTime').replaceChildren(secs.toFixed(1));const sm=document.createElement('small');sm.textContent='s';$('#oTime').append(sm);
   $('#oPeak').textContent=G.peak;$('#oBroke').textContent=G.broken;$('#oBrokeK').textContent=TXT[side].broke;$('#oRank').textContent='-';
+  $('#shareMsg').textContent='';
+  $('#oChallenge').hidden=!CH;if(CH)$('#oChallenge').textContent=secs>CH.secs?`You beat ${CH.by}'s ${CH.secs.toFixed(1)}s. Send it back to them.`:`${CH.by}'s ${CH.secs.toFixed(1)}s still stands. ${(CH.secs-secs).toFixed(1)}s to go.`;
   $('#over').hidden=false;setTimeout(()=>$('#againBtn').focus({preventScroll:true}),50);
-  saveScore({name:nick(),seconds:secs,side,peak:G.peak,broken:G.broken,at:Date.now()})}
+  lastRec={name:nick(),seconds:secs,side,peak:G.peak,broken:G.broken,rank:null};
+  prep();
+  saveScore(lastRec).then(()=>{const r=rankOf(lastRec);if(r){lastRec.rank=r;prep()}});
+  if(tvRoom){let shot=null;try{shot=lastShot?(()=>{const c=document.createElement('canvas');c.width=640;c.height=Math.round(640*lastShot.height/lastShot.width);c.getContext('2d').drawImage(lastShot,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.72)})():null}catch(e){}
+    tvRoom.send({t:'over',rec:lastRec,shot})}}
+if(QS.has('debug'))window.__s144={end:()=>{if(state==='play')gameOver()},get G(){return G},get prep(){return sharePrep}};
+$('#shStory').onclick=()=>S.share(sharePrep,'story',$('#shareMsg'));
+$('#shPost').onclick=()=>S.share(sharePrep,'post',$('#shareMsg'));
+$('#shLink').onclick=async()=>{if(!lastRec)return;const u=S.challengeUrl(lastRec);const ok=await S.copy(u);$('#shareMsg').textContent=ok?'Challenge link copied. Paste it anywhere.':u};
+// beat-the-challenger toast during play
+setInterval(()=>{if(state==='play'&&CH&&!CH.beaten&&G&&G.t>CH.secs){CH.beaten=true;toast(`You just beat ${CH.by}'s ${CH.secs.toFixed(1)}s!`);buzz(40)}},300);
 
 // ---------- leaderboard ----------
-let db=null,user=null,uid=null,board=[],filt='all',boardMsg='Loading the board…';
+let db=null,user=null,uid=null,board=[],filt='all',boardMsg='Loading the board…',backend='local';
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{filt=b.dataset.f;renderBoards()});
-const fmt=s=>Number(s).toFixed(1)+'s';
+const fmt=S.fmt;
 function valid(r){return r&&typeof r.seconds==='number'&&isFinite(r.seconds)&&r.seconds>=0&&r.seconds<36000&&(r.side==='pro'||r.side==='pol')}
+function rankOf(rec){const rows=board.filter(r=>filt==='all'||r.side===filt);const i=rows.findIndex(r=>r.id===uid&&r.side===rec.side);return i>=0?i+1:null}
 function renderBoards(){document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.f===filt));
   const rows=board.filter(r=>filt==='all'||r.side===filt).slice(0,20);
-  for(const id of['#lbMenu','#lbOver']){const ol=$(id);ol.replaceChildren();rows.forEach((r,i)=>{const li=document.createElement('li');if(uid&&r.id===uid)li.className='me';
-    const rk=document.createElement('span');rk.className='rk';rk.textContent=i+1;const who=document.createElement('span');who.className='who';who.textContent=String(r.name||'Anon').slice(0,16);
+  for(const id of['#lbMenu','#lbOver','#lbTv']){const ol=$(id);if(!ol)continue;ol.replaceChildren();rows.forEach((r,i)=>{const li=document.createElement('li');if(uid&&r.id===uid)li.className='me';
+    const rk=document.createElement('span');rk.className='rk';rk.textContent=i+1;const who=document.createElement('span');who.className='who';who.textContent=S.cleanName(r.name);
     const ch=document.createElement('span');ch.className='chip '+r.side;ch.textContent=r.side==='pro'?'PROTEST':'POLICE';const sc=document.createElement('span');sc.className='sec';sc.textContent=fmt(r.seconds);li.append(rk,who,ch,sc);ol.append(li)})}
-  const note=db?(rows.length?'Top 20 · best run per player':'No runs yet. Set the first time.'):boardMsg;$('#lbNoteMenu').textContent=note;$('#lbNoteOver').textContent=note;
-  if(uid&&state==='over'){const i=board.findIndex(r=>r.id===uid);$('#oRank').textContent=i>=0?'#'+(i+1):'-'}}
+  const note=backend!=='local'?(rows.length?'Top 20 · best run per player, per side':'No runs yet. Set the first time.'):boardMsg;
+  for(const id of['#lbNoteMenu','#lbNoteOver']){const el=$(id);if(el)el.textContent=note}
+  if(uid&&state==='over'&&lastRec){const r=rankOf(lastRec);$('#oRank').textContent=r?'#'+r:'-'}}
 function localBest(rec){try{const b=JSON.parse(localStorage.getItem('s144best')||'{}');if(!b[rec.side]||rec.seconds>b[rec.side]){b[rec.side]=rec.seconds;localStorage.setItem('s144best',JSON.stringify(b));return true}}catch(e){}return false}
+async function refreshSb(){try{board=(await S.fetchBoard()).filter(valid);renderBoards()}catch(e){if(!board.length){boardMsg='The board is unavailable right now.';renderBoards()}}}
 async function saveScore(rec){const msg=$('#saveMsg');msg.textContent='';const pb=localBest(rec);
-  if(!db||!uid){msg.textContent=(pb?'New personal best on this device. ':'')+'Saved on this device. The global board is coming soon.';return}
+  if(backend==='sb'){msg.textContent='Posting to the global board…';
+    const prev=board.find(r=>r.id===uid&&r.side===rec.side);
+    try{await S.submitScore(rec);await refreshSb();
+      msg.textContent=prev&&prev.seconds>=rec.seconds?'Your best as '+(rec.side==='pol'?'police':'a protester')+' is still '+fmt(prev.seconds)+'. Beat it to move up.':'New personal best. Posted to the global board.'}
+    catch(e){console.error(e);msg.textContent='Could not reach the global board. This run is saved on your device.'}
+    return}
+  if(backend!=='claude'||!db||!uid){msg.textContent=(pb?'New personal best on this device. ':'')+'Saved on this device.';return}
   msg.textContent='Posting…';
   try{const ref=db.collection('scores').doc(uid);const s=await ref.get();const prev=s.exists?s.data():null;
     if(prev&&valid(prev)&&prev.seconds>=rec.seconds){msg.textContent='Your board best is still '+fmt(prev.seconds)+'. Beat it to move up.';renderBoards();return}
-    await ref.set(rec);msg.textContent='New personal best. Posted to the global board.'}
+    await ref.set({name:rec.name,seconds:rec.seconds,side:rec.side,peak:rec.peak,broken:rec.broken,at:Date.now()});msg.textContent='New personal best. Posted to the global board.'}
   catch(e){msg.textContent=e&&e.code==='invalid_argument'?'You have view-only access, so this run stays on your device.':'Could not post this run. Your next one will try again.'}
   renderBoards()}
-async function initDb(){if(!(window.claude&&window.claude.use)){boardMsg='Global board coming soon. Your best runs are saved on this device.';renderBoards();return}
-  try{[user,db]=await Promise.all([window.claude.use('user'),window.claude.use('db')])}catch(e){}
-  if(user){try{uid=await user.id()}catch(e){}}
-  if(!db){boardMsg='Sign in to claude.ai to see the global board.';renderBoards();return}
-  db.collection('scores').orderBy('seconds','desc').limit(100).onSnapshot(s=>{board=s.docs.map(d=>Object.assign({id:d.id},d.data()||{})).filter(valid);renderBoards()},()=>{db=null;boardMsg='The board is unavailable right now.';renderBoards()});
-  renderBoards()}
+async function initDb(){
+  if(window.claude&&window.claude.use){backend='claude';
+    try{[user,db]=await Promise.all([window.claude.use('user'),window.claude.use('db')])}catch(e){}
+    if(user){try{uid=await user.id()}catch(e){}}
+    if(!db){backend='local';boardMsg='Sign in to claude.ai to see the global board.';renderBoards();return}
+    db.collection('scores').orderBy('seconds','desc').limit(100).onSnapshot(s=>{board=s.docs.map(d=>Object.assign({id:d.id},d.data()||{})).filter(valid);renderBoards()},()=>{db=null;backend='local';boardMsg='The board is unavailable right now.';renderBoards()});
+    renderBoards();return}
+  if(S.online){backend='sb';uid=S.playerId();await refreshSb();setInterval(()=>{if(state!=='play')refreshSb()},30000);return}
+  boardMsg='Global board is offline. Your best runs are saved on this device.';renderBoards();
+}
 renderBoards();initDb();
+
+// ---------- TV mode: big screen shows the game, phone is the controller ----------
+let tvRoom=null,tvCode=null,padName=null,lastState=0;
+function showLobby(){$('#menu').hidden=true;$('#tvLobby').hidden=false}
+function setupTv(){
+  document.body.classList.add('tv');
+  $('#tvLobby').hidden=false;$('#menu').hidden=true;
+  if(!S.online){$('#tvStatus').textContent='Phone controllers need the online backend, which is not configured yet. You can still play here with the arrow keys.';return}
+  tvCode=S.roomCode();const url=S.BASE+'?pad='+tvCode;
+  $('#tvCode').textContent=tvCode;$('#tvUrl').textContent=S.prettyUrl()+'/?pad='+tvCode;
+  const q=$('#tvQr');q.replaceChildren(S.qrCanvas(url,360,'#1C1B30','#ffffff'));
+  $('#tvStatus').textContent='Waiting for a phone…';
+  tvRoom=S.room(tvCode,onPad,st=>{if(st==='SUBSCRIBED')$('#tvStatus').textContent='Waiting for a phone… scan the code above.';else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT')$('#tvStatus').textContent='Connection trouble. Reload this page to get a new code.'});
+}
+function onPad(m){
+  if(m.t==='hello'){padName=S.cleanName(m.name);$('#tvStatus').textContent=`${padName}'s phone is connected. Pick a side on the phone and tap Start.`;buzz(20);
+    tvRoom.send({t:'lobby',ready:ready,state,best:board.slice(0,5)})}
+  else if(m.t==='start'){if(m.side==='pro'||m.side==='pol')setSide(m.side);if(m.name){$('#nick').value=S.cleanName(m.name)}if(ready)start()}
+  else if(m.t==='dir'){if(KEYMAP[m.k])press(m.k)}
+  else if(m.t==='menu'){if(state!=='play')toMenu()}
+}
+setInterval(()=>{if(!tvRoom||state!=='play'||!G)return;const P=G.P;tvRoom.send({t:'state',time:Math.round(G.t*10)/10,n:P.n,pw:G.pw&&G.t<G.pw.until?POW[G.pw.type][side]:null,heat:Math.min(8,1+Math.floor(G.t/15))})},250);
+$('#tvBtn').onclick=()=>{const u=new URL(location.href);u.searchParams.delete('pad');u.searchParams.set('tv','1');location.href=u.toString()};
+$('#tvKeys').onclick=()=>{$('#tvLobby').hidden=true;$('#menu').hidden=false;document.body.classList.remove('tv')};
+// Chromecast via the Presentation API (Chrome); AirPlay needs a Mac or iPad mirroring the screen
+if('PresentationRequest' in window&&MODE!=='tv'){$('#castBtn').hidden=false;$('#castBtn').onclick=async()=>{try{const u=new URL(S.BASE);u.searchParams.set('tv','1');const req=new PresentationRequest([u.toString()]);await req.start()}catch(e){if(e&&e.name!=='AbortError'&&e.name!=='NotAllowedError')toastMenu('Casting isn\'t available here. Open this page on the TV instead.')}}}
+function toastMenu(t){const el=$('#challenge');el.hidden=false;el.textContent=t}
+
 let ready=false;
 if(renderer){$('#startBtn').disabled=true;$('#startBtn').textContent='Loading city…';
-  loadModels().then(()=>{buildWorld();ready=true;newGame(true);$('#startBtn').disabled=false;$('#startBtn').textContent='Hit the streets'}).catch(err=>{console.error(err);$('#glErr').textContent="The city models didn't load. Check your connection and reload the page.";$('#glErr').hidden=false;$('#startBtn').textContent='Unavailable'})}
+  loadModels().then(()=>{buildWorld();ready=true;newGame(true);$('#startBtn').disabled=false;$('#startBtn').textContent='Hit the streets';if(tvRoom)tvRoom.send({t:'lobby',ready:true,state})}).catch(err=>{console.error(err);$('#glErr').textContent="The city models didn't load. Check your connection and reload the page.";$('#glErr').hidden=false;$('#startBtn').textContent='Unavailable'})}
+if(MODE==='tv')setupTv();
 requestAnimationFrame(loop);
 })();
 
 </script>
 
+<script>
+(()=>{
+const QS=new URLSearchParams(location.search);if(!QS.has('pad'))return;
+const S=window.S144,$=s=>document.querySelector(s);
+document.getElementById('app').hidden=true;$('#pad').hidden=false;document.body.classList.add('padmode');
+const code=(QS.get('pad')||'').toUpperCase().replace(/[^A-Z]/g,'').slice(0,4);$('#padCode').textContent=code||'----';
+const status=t=>{$('#padStatus').textContent=t};
+const view=v=>{for(const id of['padLobby','padPlay','padOver'])$('#'+id).hidden=id!==v};
+let side=S.ls.get('s144side')==='pol'?'pol':'pro',joined=false,prep=null,lastRec=null,lock=null;
+const setSide=s=>{side=s;S.ls.set('s144side',s);$('#pPro').setAttribute('aria-pressed',s==='pro');$('#pPol').setAttribute('aria-pressed',s==='pol')};setSide(side);
+$('#pPro').onclick=()=>setSide('pro');$('#pPol').onclick=()=>setSide('pol');
+$('#pNick').value=S.ls.get('s144nick')||'';
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+if(!S.online||code.length!==4){status('Not connected');$('#padHelp').textContent=code.length!==4?'This controller link is missing its room code. Scan the code on the TV again.':'The online backend is not set up yet, so phone controllers are unavailable.';return}
+const room=S.room(code,onMsg,st=>{if(st==='SUBSCRIBED'){status('Looking for the TV…');hello()}else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT')status('Connection lost. Reload to retry.')});
+let helloT=null;function hello(){clearTimeout(helloT);if(joined)return;room.send({t:'hello',name:S.cleanName($('#pNick').value)});helloT=setTimeout(hello,2000)}
+async function wake(){try{if(navigator.wakeLock&&!lock)lock=await navigator.wakeLock.request('screen')}catch(e){}}
+function onMsg(m){
+  if(m.t==='lobby'){joined=true;status(m.ready?'Connected to TV':'TV is loading the city…');$('#pStart').disabled=!m.ready;buzz(15)}
+  else if(m.t==='started'){view('padPlay');status('Playing');wake()}
+  else if(m.t==='state'){if($('#padPlay').hidden)view('padPlay');$('#pTime').textContent=Number(m.time).toFixed(1)+'s';$('#pSize').textContent=m.n;$('#pPow').textContent=m.pw||'-'}
+  else if(m.t==='over'&&m.rec){buzz([60,40,80]);lastRec=m.rec;view('padOver');status('Game over');
+    $('#pKick').textContent=(m.rec.side==='pol'?'Outnumbered':'Dispersed')+' · '+S.cleanName(m.rec.name);
+    $('#pOverTime').textContent=Number(m.rec.seconds).toFixed(1)+'s';
+    $('#pOverStats').textContent=`Peak crowd ${m.rec.peak} · ${m.rec.side==='pol'?'groups dispersed':'rivals outrun'} ${m.rec.broken}${m.rec.rank?' · board rank #'+m.rec.rank:''}`;
+    prep=null;$('#pShareMsg').textContent='';
+    const go=img=>S.prepareShare(m.rec,img).then(p=>prep=p).catch(()=>{});
+    if(m.shot){const img=new Image();img.onload=()=>go(img);img.onerror=()=>go(null);img.src=m.shot}else go(null)}
+}
+$('#pStart').onclick=()=>{const n=S.cleanName($('#pNick').value);S.ls.set('s144nick',$('#pNick').value.trim().slice(0,16));room.send({t:'start',side,name:n});status('Starting…');wake()};
+$('#pAgain').onclick=()=>{room.send({t:'start',side,name:S.cleanName($('#pNick').value)});wake()};
+$('#pBack').onclick=()=>{room.send({t:'menu'});view('padLobby');status('Connected to TV')};
+$('#pShStory').onclick=()=>S.share(prep,'story',$('#pShareMsg'));
+$('#pShPost').onclick=()=>S.share(prep,'post',$('#pShareMsg'));
+$('#pShLink').onclick=async()=>{if(!lastRec)return;const u=S.challengeUrl(lastRec);$('#pShareMsg').textContent=(await S.copy(u))?'Challenge link copied.':u};
+const send=k=>{room.send({t:'dir',k});buzz(8)};
+document.querySelectorAll('.pz').forEach(b=>b.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();send(b.dataset.k);b.classList.add('on');setTimeout(()=>b.classList.remove('on'),140)}));
+const z=$('#padZone');let sw=null;
+z.addEventListener('pointerdown',e=>{if(e.target.closest('.pz'))return;sw={x:e.clientX,y:e.clientY,id:e.pointerId}});
+z.addEventListener('pointermove',e=>{if(!sw||e.pointerId!==sw.id)return;const dx=e.clientX-sw.x,dy=e.clientY-sw.y;if(Math.hypot(dx,dy)<20)return;send(Math.abs(dx)>Math.abs(dy)?(dx>0?'ArrowRight':'ArrowLeft'):(dy>0?'ArrowDown':'ArrowUp'));sw.x=e.clientX;sw.y=e.clientY});
+const end=e=>{if(sw&&e.pointerId===sw.id)sw=null};z.addEventListener('pointerup',end);z.addEventListener('pointercancel',end);
+document.addEventListener('touchmove',e=>{if(!$('#padPlay').hidden)e.preventDefault()},{passive:false});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!$('#padPlay').hidden){lock=null;wake()}});
+})();
+</script>
 </body></html>
