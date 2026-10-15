@@ -40,6 +40,17 @@ body.tv .hcard .v{font-size:40px}body.tv .hcard{padding:8px 16px}body.tv #toast{
 .pz.up{grid-column:2;grid-row:1}.pz.left{grid-column:1;grid-row:2}.pz.right{grid-column:3;grid-row:2}.pz.down{grid-column:2;grid-row:3}
 .pzmid{grid-column:2;grid-row:2;font-family:var(--f-display);font-size:14px;text-align:center;color:var(--muted)}
 body.padmode{overflow:hidden}
+
+.cheatbtn{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:calc(84px + env(safe-area-inset-top,0px));font:700 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;background:var(--ink);color:var(--yolk);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--pink);padding:6px 10px;cursor:pointer}
+.cheatbtn:focus-visible{outline:3px dashed var(--yolk);outline-offset:2px}
+.cheatwrap{position:absolute;inset:0;display:grid;place-items:center;background:rgba(28,27,48,.55);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.cheatbox{width:min(420px,100%);background:var(--road);border:3px solid var(--ink);box-shadow:7px 7px 0 var(--yolk),7px 7px 0 3px var(--ink);padding:20px;display:flex;flex-direction:column;gap:10px}
+.cheatlbl{font-family:var(--f-display);font-size:24px}
+#cheatIn{font:700 22px var(--f-mono);letter-spacing:.1em;text-transform:lowercase;padding:12px;border:3px solid var(--ink);background:#111;color:#3dff7a;user-select:text}
+#cheatIn:focus-visible{outline:3px solid var(--yolk)}
+.cheatmsg{margin:0;font-weight:800;min-height:1.3em}
+.cheatmsg.ok{color:#1f8f43}.cheatmsg.no{color:var(--red)}
+@media (max-width:560px){.cheatbtn{top:calc(64px + env(safe-area-inset-top,0px));font-size:11px;padding:5px 8px}}
 </style>
 </head><body>
 <title>Section 144</title>
@@ -181,6 +192,17 @@ ol.lb .sec{font-family:var(--f-mono);font-weight:700;text-align:right;min-width:
       <div class="hcard" id="pw" hidden><span class="k">Power</span><span class="v" id="pwName">-</span><div id="pwTrack"><div id="pwBar"></div></div></div>
       <div class="hcard"><span class="k">Heat</span><span id="heatbar"></span></div>
     </div>
+  </div>
+  <button id="cheatBtn" class="cheatbtn" type="button" hidden>Cheat code</button>
+  <div id="cheat" class="cheatwrap" hidden>
+    <form id="cheatForm" class="cheatbox" autocomplete="off">
+      <span class="kicker">Cheat code · game paused</span>
+      <label for="cheatIn" class="cheatlbl">Type a code</label>
+      <input id="cheatIn" maxlength="24" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="psst… try a word">
+      <p id="cheatMsg" class="cheatmsg" aria-live="polite"></p>
+      <div class="row"><button class="go" type="submit">Apply</button><button class="go ghost" type="button" id="cheatX">Back to game</button></div>
+      <p class="lbnote">Cheats last for this run only. Cheat runs don't go on the global board.</p>
+    </form>
   </div>
   <div id="toast" hidden></div>
   <div id="swipeHint" hidden><i></i><span>Swipe to turn</span></div>
@@ -480,7 +502,15 @@ function faceTex(){const c=cv(512,256),g=c.getContext('2d');g.fillStyle='#ffffff
   return tex(c)}
 function capsule(r,len){const gb=new GB(),w=C.set('#ffffff');gb.geo(new THREE.CylinderGeometry(r,r,len,12,1,true),0,-len/2-r*.3,0,1,1,1,0,w);gb.geo(new THREE.SphereGeometry(r,12,8),0,-r*.3,0,1,1,1,0,w);gb.geo(new THREE.SphereGeometry(r,12,8),0,-len-r*.3,0,1,1,1,0,w);return gb.geom()}
 const GEO={};
-function buildPeopleGeo(){
+function roachGeo(){const gb=new GB();
+  gb.geo(new THREE.SphereGeometry(.2,18,12),0,.13,-.1,1,.42,1.6,0,C.set('#4a250e'));
+  for(const sx of[-1,1])gb.geo(new THREE.SphereGeometry(.13,14,10),sx*.07,.19,-.06,.9,.22,2.2,0,C.set('#7b4520'));
+  gb.geo(new THREE.SphereGeometry(.13,14,10),0,.13,.2,1.05,.5,.85,0,C.set('#6b3a1a'));
+  gb.geo(new THREE.SphereGeometry(.075,12,10),0,.11,.33,1,.8,1,0,C.set('#2e1708'));
+  for(const sx of[-1,1])for(const[z,a]of[[-.12,-.5],[.04,0],[.2,.5]]){gb.geo(new THREE.CylinderGeometry(.014,.01,.32,6),sx*.17,.07,z+Math.sin(a)*sx*.05,1,1,1,Math.PI/2+sx*(Math.PI/2)-a*sx,C.set('#2e1708'),Math.PI/2)}
+  for(const sx of[-1,1])gb.geo(new THREE.CylinderGeometry(.006,.006,.5,5),sx*.09,.16,.55,1,1,1,sx*.32,C.set('#2e1708'),Math.PI/2-.25);
+  return gb.geom()}
+function buildPeopleGeo(){GEO.roach=roachGeo();
   GEO.leg=capsule(.075,.14);GEO.arm=capsule(.058,.17);
   GEO.torso=new THREE.LatheGeometry([[0,0],[.15,0],[.19,.05],[.215,.16],[.2,.3],[.15,.38],[0,.4]].map(p=>new THREE.Vector2(p[0],p[1])),18);
   GEO.head=new THREE.SphereGeometry(.21,24,18);
@@ -611,7 +641,7 @@ function buildWorld(){
   const face=faceTex();
   const pm=(geo,max,opts)=>{const m=new THREE.InstancedMesh(geo,new THREE.MeshStandardMaterial(Object.assign({color:0xffffff,roughness:.6},opts||{})),max);if(geo.attributes.color)m.material.vertexColors=true;
     m.castShadow=true;m.frustumCulled=false;for(let i=0;i<max;i++)m.setColorAt(i,C.set('#ffffff'));m.count=0;scene.add(m);return m};
-  Object.assign(PM,{legL:pm(GEO.leg,MAXP),legR:pm(GEO.leg,MAXP),torso:pm(GEO.torso,MAXP),armL:pm(GEO.arm,MAXP),armR:pm(GEO.arm,MAXP),head:pm(GEO.head,MAXP,{map:face,roughness:.5}),
+  Object.assign(PM,{roach:pm(GEO.roach,MAXP,{roughness:.22,metalness:.2}),legL:pm(GEO.leg,MAXP),legR:pm(GEO.leg,MAXP),torso:pm(GEO.torso,MAXP),armL:pm(GEO.arm,MAXP),armR:pm(GEO.arm,MAXP),head:pm(GEO.head,MAXP,{map:face,roughness:.5}),
     hair:pm(GEO.hair,MAXP),helmet:pm(GEO.helmet,MAXP,{roughness:.3,metalness:.1}),goon:pm(GEO.goon,MAXP),sign:pm(GEO.sign,MAXS),shield:pm(GEO.shield,MAXS,{transparent:true,opacity:.75,roughness:.15}),umb:pm(GEO.umb,MAXU,{side:THREE.DoubleSide})});
   const ringGeo=new THREE.RingGeometry(.42,.52,40).rotateX(-Math.PI/2);
   youRing=new THREE.Mesh(ringGeo,new THREE.MeshBasicMaterial({color:0xffd23f,transparent:true,opacity:.95,depthWrite:false}));youRing.position.y=.07;scene.add(youRing);
@@ -655,7 +685,7 @@ const POW={
 function rollPower(){let tot=0;for(const k in POW)tot+=POW[k].w;let r=Math.random()*tot;for(const k in POW){r-=POW[k].w;if(r<=0)return k}return'crowd'}
 function newGame(demo){
   const s=demo?pick(WALK):LM[1].w;
-  G={t:0,ents:[],P:null,peak:1,broken:0,nextEvent:9,nextWave:26,nextCrate:5,beacon:null,shake:0,lastHud:0,lastBfs:-1,demo:!!demo,pw:null,parts:[],goonsWarned:false,flash:null};
+  G={cheats:{},paused:false,t:0,ents:[],P:null,peak:1,broken:0,nextEvent:9,nextWave:26,nextCrate:5,beacon:null,shake:0,lastHud:0,lastBfs:-1,demo:!!demo,pw:null,parts:[],goonsWarned:false,flash:null};
   crates.forEach(c=>{c.on=false;c.g.visible=false});
   const P=ent(side,s[0],s[1],1,true);P.ghost=!!demo;P.want=[P.dx,P.dz];G.P=P;G.ents.push(P);bfs(s[0],s[1]);
   const opp=side==='pro'?'pol':'pro';
@@ -785,9 +815,9 @@ const v3=new THREE.Vector3();
 function toScreen(x,y,z){v3.set(x,y,z).project(camera);return{x:(v3.x+1)/2*vw,y:(1-v3.y)/2*vh,ok:v3.z<1&&v3.z>-1,z:v3.z}}
 const M=new THREE.Matrix4(),L=new THREE.Matrix4(),O=new THREE.Matrix4(),Q=new THREE.Quaternion(),Pv=new THREE.Vector3(),Sv=new THREE.Vector3(.4,.4,.4),Yax=new THREE.Vector3(0,1,0);
 function setPart(mesh,i,x,y,z,rx){L.makeRotationX(rx);L.setPosition(x,y,z);O.multiplyMatrices(M,L);mesh.setMatrixAt(i,O)}
-const dummyM=new THREE.Matrix4();
+const dummyM=new THREE.Matrix4();const RS=new THREE.Vector3(1.35,1.35,1.35);
 function drawCrowds(now){
-  let b=0,s=0,sh=0,u=0,h1=0,h2=0,h3=0,li=0,ri=0;const P=G.P,shieldP=pwOn('shield');
+  let b=0,s=0,sh=0,u=0,h1=0,h2=0,h3=0,rc=0,li=0,ri=0;const P=G.P,shieldP=pwOn('shield'),roachMode=!!G.cheats.cockroach;
   for(const e of G.ents){
     if(e.ghost)continue;const hx=px(e),hz=pz(e);
     if(Math.abs(hx-px(P))>17||Math.abs(hz-pz(P))>14)continue;
@@ -798,6 +828,7 @@ function drawCrowds(now){
       const x=tp.x+(-tp.dz)*off+(r-.5)*.04,z=tp.z+tp.dx*off+(((r*7)%1)-.5)*.04;
       const ph=now*gait+k*1.7+e.seed,sw=moving?Math.sin(ph)*.75:0,bob=moving?Math.abs(Math.cos(ph))*.018:0;
       Q.setFromAxisAngle(Yax,Math.atan2(tp.dx,tp.dz));Pv.set(W(x),.05+bob,W(z));M.compose(Pv,Q,Sv);
+      if(roachMode&&sd==='pro'){if(rc<MAXP){L.makeRotationY(moving?Math.sin(now*26+k*2.1)*.22:0);L.scale(RS);L.setPosition(0,moving?Math.abs(Math.sin(now*30+k))*.02:0,0);O.multiplyMatrices(M,L);PM.roach.setMatrixAt(rc,O);PM.roach.setColorAt(rc,C.setHSL(.07,.6,.32+((k*7)%5)*.03));rc++}continue}
       const holder=sd==='pro'&&k%3===0&&!(e.player&&shieldP),shieldMan=sd==='pol'&&(k%3===0||(e.player&&shieldP));
       setPart(PM.legL,b,.09,.26,0,sw);setPart(PM.legR,b,-.09,.26,0,-sw);setPart(PM.torso,b,0,.22,0,0);
       if(holder||(e.player&&shieldP&&sd==='pro')){setPart(PM.armL,b,.2,.58,0,Math.PI-.15);setPart(PM.armR,b,-.2,.58,0,Math.PI-.15)}
@@ -825,7 +856,7 @@ function drawCrowds(now){
   for(let i=li;i<lblPool.length;i++)lblPool[i].hidden=true;
   for(let i=ri;i<threatRings.length;i++)threatRings[i].visible=false;
   const fin=(m,n)=>{m.count=n;m.instanceMatrix.needsUpdate=true;if(m.instanceColor)m.instanceColor.needsUpdate=true};
-  for(const k of['legL','legR','torso','armL','armR','head'])fin(PM[k],b);fin(PM.hair,h1);fin(PM.helmet,h2);fin(PM.goon,h3);fin(PM.sign,s);fin(PM.shield,sh);fin(PM.umb,u);
+  for(const k of['legL','legR','torso','armL','armR','head'])fin(PM[k],b);fin(PM.roach,rc);fin(PM.hair,h1);fin(PM.helmet,h2);fin(PM.goon,h3);fin(PM.sign,s);fin(PM.shield,sh);fin(PM.umb,u);
   let pi=0;for(const p of G.parts){const sc=p.sz*Math.max(.2,p.life/p.max);dummyM.makeScale(sc,sc,sc);dummyM.setPosition(W(p.x),p.y,W(p.z));partM.setMatrixAt(pi,dummyM);partM.setColorAt(pi,C.set(p.c));pi++}
   fin(partM,pi);
   youRing.visible=!P.ghost;youRing.position.set(W(px(P)),.07,W(pz(P)));
@@ -870,14 +901,14 @@ function placeCamera(dt,now){
 }
 let last=performance.now();
 function loop(ts){const dt=Math.min(.05,(ts-last)/1000);last=ts;const now=ts/1000;
-  if(renderer&&G&&ready){if((state==='play'||G.demo)&&!document.hidden)update(dt);if(G){placeCamera(dt,now);drawCrowds(now);renderer.render(scene,camera);drawOverlay()}}
+  if(renderer&&G&&ready){if(((state==='play'&&!G.paused)||G.demo)&&!document.hidden)update(dt);if(G){placeCamera(dt,now);drawCrowds(now);renderer.render(scene,camera);drawOverlay()}}
   requestAnimationFrame(loop)}
 window.addEventListener('resize',resize);resize();
 
 // ---------- input ----------
 const KEYMAP={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
 function press(k){if(state==='play'&&G&&!G.P.ghost)G.P.want=KEYMAP[k]}
-window.addEventListener('keydown',e=>{if(KEYMAP[e.key]){if(state==='play'||!(document.activeElement&&document.activeElement.tagName==='INPUT'))e.preventDefault();press(e.key)}
+window.addEventListener('keydown',e=>{if(typeof cheatOpen!=='undefined'&&cheatOpen)return;if(KEYMAP[e.key]){if(state==='play'||!(document.activeElement&&document.activeElement.tagName==='INPUT'))e.preventDefault();press(e.key)}
   if(e.key==='Enter'&&(state==='menu'||state==='over')&&renderer){e.preventDefault();start()}});
 document.querySelectorAll('#dpad button').forEach(b=>{const k=b.dataset.k;b.addEventListener('pointerdown',e=>{e.preventDefault();press(k);b.classList.add('on')});const off=()=>b.classList.remove('on');b.addEventListener('pointerup',off);b.addEventListener('pointerleave',off);b.addEventListener('pointercancel',off)});
 const isTouch=matchMedia('(pointer:coarse)').matches||('ontouchstart' in window);
@@ -903,13 +934,27 @@ const CH=(()=>{const b=parseFloat(QS.get('beat'));if(!(b>0&&b<3600))return null;
 if(CH&&MODE!=='tv'){const el=$('#challenge');el.hidden=false;el.textContent=`${CH.by} held out ${CH.secs.toFixed(1)}s as ${CH.side==='pol'?'Police':'a Protester'}. Can you beat it?`;setSide(CH.side)}
 function start(){if(!renderer||!ready)return;S.ls.set('s144nick',$('#nick').value.trim().slice(0,16));
   newGame(false);camInit=false;state='play';sharePrep=null;if(CH)CH.beaten=false;
-  $('#menu').hidden=true;$('#over').hidden=true;$('#tvLobby').hidden=true;$('#hud').hidden=false;$('#hSizeK').textContent=TXT[side].sizeK;
+  $('#menu').hidden=true;$('#over').hidden=true;$('#tvLobby').hidden=true;$('#hud').hidden=false;$('#cheatBtn').hidden=false;closeCheat();$('#hSizeK').textContent=TXT[side].sizeK;
   if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();toast(TXT[side].hello);
   if(isTouch&&MODE!=='tv'){$('#swipeHint').hidden=false;clearTimeout(hintT);hintT=setTimeout(hideHint,4500)}
   if(tvRoom)tvRoom.send({t:'started',side})}
+// ---------- cheat codes (reset with every new run) ----------
+const CHEATS={
+  cockroach:{label:'Cockroach mode',msg:'Cockroach mode on. Every protester on the map is now a cockroach.',apply(){G.cheats.cockroach=true}},
+};
+let cheatOpen=false;
+function openCheat(){if(state!=='play'||!G)return;cheatOpen=true;G.paused=true;hideHint();$('#cheat').hidden=false;$('#cheatMsg').textContent='';$('#cheatMsg').className='cheatmsg';$('#cheatIn').value='';setTimeout(()=>$('#cheatIn').focus(),30)}
+function closeCheat(){cheatOpen=false;$('#cheat').hidden=true;if(G)G.paused=false;if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()}
+$('#cheatBtn').onclick=openCheat;$('#cheatX').onclick=closeCheat;
+$('#cheatForm').onsubmit=e=>{e.preventDefault();const code=($('#cheatIn').value||'').toLowerCase().replace(/[^a-z0-9]/g,'');const c=CHEATS[code],m=$('#cheatMsg');
+  if(!c){m.textContent='Nothing happened. Try another code.';m.className='cheatmsg no';buzz(30);return}
+  if(G.cheats[code]){m.textContent=c.label+' is already on.';m.className='cheatmsg ok';return}
+  c.apply();G.cheated=true;m.textContent=c.label+' unlocked.';m.className='cheatmsg ok';buzz([20,30,20]);
+  setTimeout(()=>{closeCheat();toast(c.msg)},650)};
+$('#cheat').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();closeCheat()}});
 $('#startBtn').onclick=start;$('#againBtn').onclick=start;
 $('#switchBtn').onclick=()=>{setSide(side==='pro'?'pol':'pro');start()};
-function toMenu(){state='menu';newGame(true);camInit=false;$('#over').hidden=true;$('#hud').hidden=true;if(MODE==='tv')showLobby();else $('#menu').hidden=false;renderBoards()}
+function toMenu(){state='menu';$('#cheatBtn').hidden=true;closeCheat();newGame(true);camInit=false;$('#over').hidden=true;$('#hud').hidden=true;if(MODE==='tv')showLobby();else $('#menu').hidden=false;renderBoards()}
 $('#menuBtn').onclick=toMenu;
 function nearestLM(){const P=G.P;let b=LM[0],bd=1e9;for(const l of LM){const d=Math.hypot(l.x-px(P),l.y-pz(P));if(d<bd){bd=d;b=l}}return b}
 function captureShot(w){try{drawCrowds(performance.now()/1000);renderer.render(scene,camera);const h=Math.round(w*glc.height/glc.width),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(glc,0,0,w,h);return c}catch(e){return null}}
@@ -917,14 +962,14 @@ let sharePrep=null,lastRec=null,lastShot=null;
 async function prep(){if(!lastRec)return;const r=Object.assign({},lastRec);try{sharePrep=await S.prepareShare(r,lastShot)}catch(e){console.error(e)}}
 function gameOver(){state='over';buzz([60,40,80]);hideHint();const secs=Math.round(G.t*10)/10;
   lastShot=captureShot(1280);
-  $('#hud').hidden=true;$('#toast').hidden=true;$('#pw').hidden=true;
+  $('#hud').hidden=true;$('#toast').hidden=true;$('#pw').hidden=true;$('#cheatBtn').hidden=true;closeCheat();
   $('#oKick').textContent=TXT[side].kick+' '+nearestLM().n;$('#oTitle').textContent=TXT[side].lose;
   $('#oTime').replaceChildren(secs.toFixed(1));const sm=document.createElement('small');sm.textContent='s';$('#oTime').append(sm);
   $('#oPeak').textContent=G.peak;$('#oBroke').textContent=G.broken;$('#oBrokeK').textContent=TXT[side].broke;$('#oRank').textContent='-';
   $('#shareMsg').textContent='';
   $('#oChallenge').hidden=!CH;if(CH)$('#oChallenge').textContent=secs>CH.secs?`You beat ${CH.by}'s ${CH.secs.toFixed(1)}s. Send it back to them.`:`${CH.by}'s ${CH.secs.toFixed(1)}s still stands. ${(CH.secs-secs).toFixed(1)}s to go.`;
   $('#over').hidden=false;setTimeout(()=>$('#againBtn').focus({preventScroll:true}),50);
-  lastRec={name:nick(),seconds:secs,side,peak:G.peak,broken:G.broken,rank:null};
+  lastRec={name:nick(),seconds:secs,side,peak:G.peak,broken:G.broken,rank:null,cheat:G.cheated?Object.keys(G.cheats).map(k=>CHEATS[k].label).join(' + '):null};
   prep();
   saveScore(lastRec).then(()=>{const r=rankOf(lastRec);if(r){lastRec.rank=r;prep()}});
   if(tvRoom){let shot=null;try{shot=lastShot?(()=>{const c=document.createElement('canvas');c.width=640;c.height=Math.round(640*lastShot.height/lastShot.width);c.getContext('2d').drawImage(lastShot,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.72)})():null}catch(e){}
@@ -952,7 +997,7 @@ function renderBoards(){document.querySelectorAll('.tab').forEach(b=>b.setAttrib
   if(uid&&state==='over'&&lastRec){const r=rankOf(lastRec);$('#oRank').textContent=r?'#'+r:'-'}}
 function localBest(rec){try{const b=JSON.parse(localStorage.getItem('s144best')||'{}');if(!b[rec.side]||rec.seconds>b[rec.side]){b[rec.side]=rec.seconds;localStorage.setItem('s144best',JSON.stringify(b));return true}}catch(e){}return false}
 async function refreshSb(){try{board=(await S.fetchBoard()).filter(valid);renderBoards()}catch(e){if(!board.length){boardMsg='The board is unavailable right now.';renderBoards()}}}
-async function saveScore(rec){const msg=$('#saveMsg');msg.textContent='';const pb=localBest(rec);
+async function saveScore(rec){const msg=$('#saveMsg');msg.textContent='';if(rec.cheat){msg.textContent='Cheat run ('+rec.cheat+'), so it stays off the leaderboard. Play clean to post a time.';return}const pb=localBest(rec);
   if(backend==='sb'){msg.textContent='Posting to the global board…';
     const prev=board.find(r=>r.id===uid&&r.side===rec.side);
     try{await S.submitScore(rec);await refreshSb();

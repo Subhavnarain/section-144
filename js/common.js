@@ -53,24 +53,25 @@
     let ts=fmt==='post'?132:160;g.font=ts+'px '+FD;while(g.measureText('SECTION 144').width>W-m*2-10&&ts>60){ts-=4;g.font=ts+'px '+FD}
     g.fillStyle=PINK;g.fillText('SECTION 144',m+7,y+6);g.fillStyle=INK;g.fillText('SECTION 144',m,y);y+=fmt==='post'?160:200;
     // screenshot frame
-    const fw=W-m*2,fh=fmt==='post'?440:620;
+    const fw=W-m*2,fh=fmt==='post'?360:620;
     g.fillStyle=sc;g.fillRect(m+14,y+14,fw,fh);g.fillStyle=INK;g.fillRect(m-5,y-5,fw+10,fh+10);
     if(shot){const iw=shot.width,ih=shot.height,s=Math.max(fw/iw,fh/ih),dw=iw*s,dh=ih*s;g.save();g.beginPath();g.rect(m,y,fw,fh);g.clip();g.drawImage(shot,m+(fw-dw)/2,y+(fh-dh)/2,dw,dh);g.restore()}
     else{g.fillStyle='#cfc8bb';g.fillRect(m,y,fw,fh)}
+    if(rec.cheat){g.save();g.font='34px '+FD;const ct='CHEAT: '+rec.cheat.toUpperCase(),cw2=g.measureText(ct).width;g.fillStyle=INK;g.fillRect(m+24,y+fh-84,cw2+40,60);g.fillStyle='#3dff7a';g.fillText(ct,m+44,y+fh-74);g.restore()}
     g.save();g.translate(m+fw-30,y+30);g.rotate(.06);g.font='44px '+FD;const tw=g.measureText(side).width;g.fillStyle=INK;g.fillRect(-tw-34+6,-6+6,tw+40,70);g.fillStyle=sc;g.fillRect(-tw-34,-6,tw+40,70);g.fillStyle=rec.side==='pol'?PAPER:INK;g.textAlign='left';g.fillText(side,-tw-14,6);g.restore();
-    y+=fh+(fmt==='post'?50:80);
+    y+=fh+(fmt==='post'?40:80);
     g.fillStyle=INK;g.font='600 34px '+FM;g.fillText('I HELD OUT',m,y);y+=46;
-    g.font=(fmt==='post'?190:230)+'px '+FD;g.fillText(rec.seconds.toFixed(1),m,y);const tw2=g.measureText(rec.seconds.toFixed(1)).width;g.font='90px '+FD;g.fillText('s',m+tw2+12,y+(fmt==='post'?82:112));
-    y+=fmt==='post'?210:260;
+    g.font=(fmt==='post'?150:230)+'px '+FD;g.fillText(rec.seconds.toFixed(1),m,y);const tw2=g.measureText(rec.seconds.toFixed(1)).width;g.font=(fmt==='post'?64:90)+'px '+FD;g.fillText('s',m+tw2+12,y+(fmt==='post'?72:112));
+    y+=fmt==='post'?170:260;const chh=fmt==='post'?110:130;
     const cards=[['PEAK CROWD',String(rec.peak)],[rec.side==='pol'?'GROUPS DISPERSED':'RIVALS OUTRUN',String(rec.broken||0)],['BOARD RANK',rec.rank?('#'+rec.rank):'-']];
-    const cw=(W-m*2-40)/3;cards.forEach(([k,v],i)=>{const x=m+i*(cw+20);g.fillStyle=INK;g.fillRect(x+6,y+6,cw,130);g.fillStyle=PAPER;g.fillRect(x,y,cw,130);g.strokeStyle=INK;g.lineWidth=5;g.strokeRect(x,y,cw,130);
-      g.fillStyle='#5B5E70';g.font='600 22px '+FM;g.fillText(k,x+20,y+20);g.fillStyle=INK;g.font='58px '+FD;g.fillText(v,x+20,y+52)});
+    const cw=(W-m*2-40)/3;cards.forEach(([k,v],i)=>{const x=m+i*(cw+20);g.fillStyle=INK;g.fillRect(x+6,y+6,cw,chh);g.fillStyle=PAPER;g.fillRect(x,y,cw,chh);g.strokeStyle=INK;g.lineWidth=5;g.strokeRect(x,y,cw,chh);
+      g.fillStyle='#5B5E70';g.font='600 22px '+FM;g.fillText(k,x+20,y+20);g.fillStyle=INK;g.font=(fmt==='post'?48:58)+'px '+FD;g.fillText(v,x+20,y+(fmt==='post'?48:52))});
     y+=180;
     // footer: QR + link
-    const qs=fmt==='post'?200:240,qy=H-qs-(fmt==='post'?60:120),qx=W-m-qs;
+    const qs=fmt==='post'?180:240,qy=H-qs-(fmt==='post'?56:120),qx=W-m-qs;
     g.fillStyle=INK;g.fillRect(qx+8,qy+8,qs,qs);g.drawImage(S.qrCanvas(S.challengeUrl(rec),qs,INK,'#ffffff'),qx,qy);
     g.fillStyle=YOLK;g.fillRect(m,qy,qx-m-30,qs);g.strokeStyle=INK;g.lineWidth=5;g.strokeRect(m,qy,qx-m-30,qs);
-    g.fillStyle=INK;g.font='54px '+FD;g.fillText('BEAT ME.',m+28,qy+26);g.font='700 30px '+FB;wrapText(g,'Scan or tap the link to play. Pick a side, grow your crowd, hold the streets.',m+28,qy+96,qx-m-90,38);
+    g.fillStyle=INK;g.font='54px '+FD;g.fillText('BEAT ME.',m+28,qy+26);g.font='700 30px '+FB;wrapText(g,'Scan or tap the link to play. Pick a side, grow your crowd, hold the streets.',m+28,qy+(fmt==='post'?86:96),qx-m-90,fmt==='post'?34:38);
     g.font='600 26px '+FM;g.fillStyle=INK;g.fillText(S.prettyUrl(),m,qy+qs+22);
     g.fillStyle='#5B5E70';g.font='600 22px '+FM;g.textAlign='right';g.fillText("A NOBODY'S BUSINESS DROP",W-m,qy+qs+26);g.textAlign='left';
     return c;
