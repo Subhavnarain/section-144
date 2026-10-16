@@ -234,7 +234,7 @@ ol.lb .sec{font-family:var(--f-mono);font-weight:700;text-align:right;min-width:
         <dl class="rules">
           <dt><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd></dt><dd>Arrow keys, or swipe on your phone. You turn at the next junction and keep moving until a wall stops you.</dd>
           <dt>SAME SIDE</dt><dd>Touch any part of a group to merge. Your march gets longer.</dd>
-          <dt>OTHER SIDE</dt><dd>Bigger group wins. Red tags outnumber you.</dd>
+          <dt>OTHER SIDE</dt><dd>Bigger group wins, but it costs you: beat 3 with 5 and only 2 are left standing. Red tags outnumber you.</dd>
           <dt>LOOT</dt><dd>Run over glowing crates for a power: Scooty, Megaphone, Umbrella wall, Gulaal cloud, Viral post or Metro hop.</dd>
           <dt>GOONS</dt><dd>Masked goons roam the streets and break up any group smaller than theirs.</dd>
           <dt>FORWARDS</dt><dd>Follow the yellow beam when a meet-up drops.</dd>
@@ -782,7 +782,7 @@ function update(dt){
         if((a.player||b.player)&&baraatOn()){const pl=a.player?a:b,o=a.player?b:a;pl.n+=o.n;o.dead=true;G.peak=Math.max(G.peak,pl.n);G.broken+=o.n;puff(px(o),pz(o),14,['#ff9f1a','#ffd23f','#e91e63'],1,1.4,.8);continue}
         const shieldHit=(a.player&&pwOn('shield')&&b.n>a.n)||(b.player&&pwOn('shield')&&a.n>b.n);
         if(a.n===b.n||shieldHit){if(a.cool<=0&&b.cool<=0){reverse(a);reverse(b);a.cool=b.cool=.6;if(shieldHit)puff(px(a.player?a:b),pz(a.player?a:b),14,['#7fd3ff','#ffffff'],1,1,.5)}continue}
-        const big=a.n>b.n?a:b,small=big===a?b:a;big.n+=Math.ceil(small.n*.5);small.dead=true;
+        const big=a.n>b.n?a:b,small=big===a?b:a;big.n=Math.max(1,big.n-small.n);big.cool=.4;small.dead=true;if(big.player){toast(`-${small.n} · ${big.n} left standing`);buzz(25)}
         puff(px(small),pz(small),Math.min(30,6+small.n*2),small.side==='pro'?['#FF3D8B','#ffffff']:small.side==='pol'?['#c8b27a','#2E4BFF']:['#333','#7a1f1f'],1.3,1.2,.8);
         if(small.player){gameOver();return}
         if(big.player){G.broken+=small.n;G.peak=Math.max(G.peak,big.n);G.shake=.25}
