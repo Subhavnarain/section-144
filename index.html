@@ -959,13 +959,23 @@ function nick(){return S.cleanName($('#nick').value)}
 // challenge links: ?beat=87.3&by=Name&s=pro
 const CH=(()=>{const b=parseFloat(QS.get('beat'));if(!(b>0&&b<3600))return null;return{secs:b,by:S.cleanName(QS.get('by')),side:QS.get('s')==='pol'?'pol':'pro',beaten:false}})();
 if(CH&&MODE!=='tv'){const el=$('#challenge');el.hidden=false;el.textContent=`${CH.by} held out ${CH.secs.toFixed(1)}s as ${CH.side==='pol'?'Police':'a Protester'}. Can you beat it?`;setSide(CH.side)}
-function start(){if(!renderer||!ready)return;dhol.stop();S.ls.set('s144nick',$('#nick').value.trim().slice(0,16));
+function start(){if(!renderer||!ready)return;dhol.stop();sfx.unlock();S.ls.set('s144nick',$('#nick').value.trim().slice(0,16));
   newGame(false);camInit=false;state='play';sharePrep=null;if(CH)CH.beaten=false;
   $('#menu').hidden=true;$('#over').hidden=true;$('#tvLobby').hidden=true;$('#hud').hidden=false;$('#cheatBtn').hidden=false;closeCheat();$('#hSizeK').textContent=TXT[side].sizeK;
   if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();toast(TXT[side].hello);
   if(isTouch&&MODE!=='tv'){$('#swipeHint').hidden=false;clearTimeout(hintT);hintT=setTimeout(hideHint,4500)}
   if(tvRoom)tvRoom.send({t:'started',side})}
 // ---------- cheat codes (reset with every new run) ----------
+// original 8-bit "busted" sting for game over (not any existing game's music)
+const sfx=(()=>{let ac=null;
+  const ctx=()=>{try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume()}catch(e){ac=null}return ac};
+  function tone(f,t0,d,type,vol,slideTo,vib){const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(f,t0);if(slideTo)o.frequency.exponentialRampToValueAtTime(slideTo,t0+d);
+    if(vib){const l=ac.createOscillator(),lg=ac.createGain();l.frequency.value=vib;lg.gain.value=f*.04;l.connect(lg).connect(o.frequency);l.start(t0);l.stop(t0+d+.05)}
+    g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+.008);g.gain.exponentialRampToValueAtTime(.0008,t0+d);o.connect(g).connect(ac.destination);o.start(t0);o.stop(t0+d+.05)}
+  return{unlock(){ctx()},caught(){if(!ctx())return;const t=ac.currentTime+.06;
+    [[880,0,.07],[740,.08,.07],[587,.16,.07],[440,.24,.07],[370,.32,.12]].forEach(([f,o,d])=>tone(f,t+o,d,'square',.09));
+    tone(494,t+.5,.75,'square',.08,117,7);tone(247,t+.5,.75,'triangle',.11,58,7);
+    tone(110,t+1.32,.18,'triangle',.16,70);tone(82,t+1.52,.5,'triangle',.18,41);tone(82,t+1.52,.5,'square',.035,41)}}})();
 const BARAAT_DUR=25;
 const BARAAT_CLOTH=['#e91e63','#ff9800','#ffc107','#8e24aa','#00897b','#d81b60','#fdd835','#43a047'];
 const BARAAT_SAFA=['#ff5722','#e91e63','#ffc107','#ff9800','#c2185b'];
@@ -998,7 +1008,7 @@ function nearestLM(){const P=G.P;let b=LM[0],bd=1e9;for(const l of LM){const d=M
 function captureShot(w){try{drawCrowds(performance.now()/1000);renderer.render(scene,camera);const h=Math.round(w*glc.height/glc.width),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(glc,0,0,w,h);return c}catch(e){return null}}
 let sharePrep=null,lastRec=null,lastShot=null;
 async function prep(){if(!lastRec)return;const r=Object.assign({},lastRec);try{sharePrep=await S.prepareShare(r,lastShot)}catch(e){console.error(e)}}
-function gameOver(){state='over';dhol.stop();buzz([60,40,80]);hideHint();const secs=Math.round(G.t*10)/10;
+function gameOver(){state='over';dhol.stop();sfx.caught();buzz([60,40,80]);hideHint();const secs=Math.round(G.t*10)/10;
   lastShot=captureShot(1280);
   $('#hud').hidden=true;$('#toast').hidden=true;$('#pw').hidden=true;$('#cheatBtn').hidden=true;closeCheat();
   $('#oKick').textContent=TXT[side].kick+' '+nearestLM().n;$('#oTitle').textContent=TXT[side].lose;
@@ -1064,6 +1074,7 @@ renderBoards();initDb();
 // ---------- TV mode: big screen shows the game, phone is the controller ----------
 let tvRoom=null,tvCode=null,padName=null,lastState=0;
 function showLobby(){$('#menu').hidden=true;$('#tvLobby').hidden=false}
+document.addEventListener('pointerdown',()=>{try{sfx.unlock()}catch(e){}},{once:true});
 function setupTv(){
   document.body.classList.add('tv');
   $('#tvLobby').hidden=false;$('#menu').hidden=true;
